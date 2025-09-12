@@ -1,3 +1,9 @@
+ALTER TABLE public.app_order
+  ADD COLUMN IF NOT EXISTS payment_intent_id VARCHAR(128);
+
+CREATE UNIQUE INDEX IF NOT EXISTS ux_app_order_payment_intent_id
+  ON public.app_order(payment_intent_id);
+
 INSERT INTO users (name, email, password, role) VALUES
     ('出品者A', 'sellerA@example.com', 'password', 'USER'),
     ('購入者B', 'z', 'password', 'USER'),
