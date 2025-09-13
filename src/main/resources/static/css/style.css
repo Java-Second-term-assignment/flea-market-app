@@ -1,3 +1,14 @@
+:root {
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --border: #e5e7eb;
+  --text: #111827;
+  --muted: #6b7280;
+  --primary: #2563eb;
+  --danger: #dc2626;
+}
+
+* { box-sizing: border-box; }
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
@@ -6,6 +17,18 @@ body {
     color: #333;
     line-height: 1.6;
 }
+/* ナビ */
+.navbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding: 0.75rem 1rem; background: var(--card); border-bottom: 1px solid var(--border);
+}
+.brand { font-weight: 700; text-decoration: none; color: var(--text); }
+.nav-links a {
+  margin-right: .75rem; text-decoration: none; color: var(--text);
+}
+.nav-links a:hover { text-decoration: underline; }
+.logout-form { margin: 0; }
+
 
 .container {
     max-width: 960px;

@@ -1,55 +1,44 @@
 package com.example.fleamarketsystem.config;
 
-import com.example.fleamarketsystem.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/login", "/css/**", "/js/**", "/items", "/items/{id}").permitAll() // Public access
-                .requestMatchers("/admin/**").hasRole("ADMIN") // Admin specific paths
-                .anyRequest().authenticated() // All other requests require authentication
-            )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/items", true) // Redirect to item list after successful login
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout") // Redirect to login page after logout
-                .permitAll()
-            );
-        return http.build();
-    }
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		// {bcrypt},{noop} など委譲エンコーダ
+		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+	}
 
-    @Bean
-    public UserDetailsService userDetailsService(UserRepository userRepository) {
-        return email -> userRepository.findByEmail(email)
-                .map(user -> org.springframework.security.core.userdetails.User.builder()
-                        .username(user.getEmail()) // Use email as username for Spring Security
-                        .password(user.getPassword())
-                        .roles(user.getRole())
-                        .disabled(!user.isEnabled()) // Map enabled status
-                        .build())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
-    }
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers(
+								"/login",
+								"/css/**", "/js/**", "/images/**", "/webjars/**")
+						.permitAll()
+						.requestMatchers("/admin/**").hasRole("ADMIN")
+						.anyRequest().authenticated())
+				.formLogin(form -> form
+						.loginPage("/login")
+						.defaultSuccessUrl("/items", true) // ログイン成功後
+						.permitAll())
+				.logout(logout -> logout
+						.logoutUrl("/logout") // POST /logout
+						.logoutSuccessUrl("/login?logout")
+						.permitAll())
+				.csrf(Customizer.withDefaults());
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-    }
+		return http.build();
+	}
 }

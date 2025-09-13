@@ -40,6 +40,13 @@
             <groupId>org.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-springsecurity6</artifactId>
         </dependency>
+        
+        <!-- Thymeleaf + Spring Security (hasRole など使えるように) -->
+<dependency>
+  <groupId>org.thymeleaf.extras</groupId>
+  <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+</dependency>
+
 
         <!-- Cloudinary -->
         <dependency>
