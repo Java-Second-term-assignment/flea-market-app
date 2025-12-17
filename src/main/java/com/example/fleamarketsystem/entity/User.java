@@ -74,4 +74,10 @@ public class User {
 
 	@Column(name = "banned_by_admin_id")
 	private Integer bannedByAdminId;
+
+	@Column(name = "password_reset_token")
+	private String passwordResetToken;
+
+	@Column(name = "password_reset_token_expiry")
+	private LocalDateTime passwordResetTokenExpiry;
 }
