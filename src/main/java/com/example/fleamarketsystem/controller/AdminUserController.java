@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -85,5 +86,23 @@ public class AdminUserController {
 	public String unban(@PathVariable Long id) {
 		service.unbanUser(id);
 		return "redirect:/admin/users/" + id + "?unbanned";
+	}
+
+	@GetMapping("/new")
+	public String newUserForm(Model model) {
+		model.addAttribute("user", new User());
+		return "admin/users/new";
+	}
+
+	@PostMapping
+	public String createUser(@ModelAttribute User user, Model model) {
+		try {
+			service.createUser(user);
+			return "redirect:/admin/users?created";
+		} catch (IllegalArgumentException e) {
+			model.addAttribute("error", e.getMessage());
+			model.addAttribute("user", user);
+			return "admin/users/new";
+		}
 	}
 }

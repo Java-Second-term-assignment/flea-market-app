@@ -25,10 +25,19 @@ public class User {
 	private Long id;
 
 	@Column(nullable = false)
-	private String name;
+	private String name; // 表示名
 
 	@Column(unique = true, nullable = false)
 	private String email;
+
+	@Column(name = "real_name")
+	private String realName; // 本名
+
+	@Column(name = "furigana")
+	private String furigana; // フリガナ
+
+	@Column(name = "phone_number")
+	private String phoneNumber; // 電話番号
 
 	@Column(nullable = false)
 	private String password;
@@ -38,6 +47,18 @@ public class User {
 
 	@Column(name = "line_notify_token")
 	private String lineNotifyToken;
+
+	@Column(name = "postal_code")
+	private String postalCode;
+
+	@Column(name = "address")
+	private String address;
+
+	@Column(name = "age")
+	private Integer age;
+
+	@Column(name = "gender")
+	private String gender; // "MALE", "FEMALE", "OTHER", or null
 
 	@Column(nullable = false)
 	private boolean enabled = true;

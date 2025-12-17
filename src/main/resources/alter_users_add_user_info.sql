@@ -1,0 +1,10 @@
+-- 既存の users テーブルにユーザー情報カラムを追加する移行スクリプト
+ALTER TABLE public.users
+  ADD COLUMN IF NOT EXISTS real_name VARCHAR(100),
+  ADD COLUMN IF NOT EXISTS furigana VARCHAR(100),
+  ADD COLUMN IF NOT EXISTS phone_number VARCHAR(20),
+  ADD COLUMN IF NOT EXISTS postal_code VARCHAR(10),
+  ADD COLUMN IF NOT EXISTS address TEXT,
+  ADD COLUMN IF NOT EXISTS age INTEGER,
+  ADD COLUMN IF NOT EXISTS gender VARCHAR(10);
+
