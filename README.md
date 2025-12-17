@@ -149,12 +149,21 @@ DROP TABLE IF EXISTS users CASCADE;
 -- ========== CREATE ==========
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(50) NOT NULL,
+  name VARCHAR(50) NOT NULL,            -- 表示名
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
   role VARCHAR(20) NOT NULL,            -- 'USER' / 'ADMIN'
   line_notify_token VARCHAR(255),
   enabled BOOLEAN NOT NULL DEFAULT TRUE,
+
+  -- ★ ユーザー情報
+  real_name VARCHAR(100),               -- 本名
+  furigana VARCHAR(100),                -- フリガナ
+  phone_number VARCHAR(20),             -- 電話番号
+  postal_code VARCHAR(10),
+  address TEXT,
+  age INTEGER,
+  gender VARCHAR(10),                   -- 'MALE' / 'FEMALE' / 'OTHER' / NULL
 
   -- ★ BAN系（最初から持たせる）
   banned BOOLEAN NOT NULL DEFAULT FALSE,
@@ -262,18 +271,32 @@ CREATE INDEX IF NOT EXISTS idx_uc_reported            ON user_complaint(reported
 CREATE INDEX IF NOT EXISTS idx_uc_reporter            ON user_complaint(reporter_user_id);
 ```
 
-4) 起動
+4) 既存データベースへのカラム追加（既存DBを使用する場合）
+```text
+# PostgreSQLに接続してALTER文を実行
+psql -U kt -d fleamarketdb -f src/main/resources/alter_users_add_user_info.sql
+
+# または、psqlで直接実行
+psql -U kt -d fleamarketdb
+ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS postal_code VARCHAR(10),
+  ADD COLUMN IF NOT EXISTS address TEXT,
+  ADD COLUMN IF NOT EXISTS age INTEGER,
+  ADD COLUMN IF NOT EXISTS gender VARCHAR(10);
+```
+
+5) 起動
 ```text
 mvn spring-boot:run
 # → http://localhost:8080/
 ```
 
 ## サンプルアカウント
-| 役割    | メール                                           | パスワード     |
+| 役割   | メール                                         | パスワード |
 | ----- | --------------------------------------------- | --------- |
-| USER  | [user1@example.com](mailto:user1@example.com) | password  |
-| USER  | [user2@example.com](mailto:user2@example.com) | password  |
-| ADMIN | [admin@example.com](mailto:admin@example.com) | adminpass |
+| USER  | sellerA@example.com                           | password  |
+| USER  | xyz@example.com                               | password  |
+| ADMIN | adminC@example.com                            | adminpass |
 
  - 開発用の平文または簡易エンコードを想定。本番は BCrypt 等に切り替えてください。
 
