@@ -10,16 +10,51 @@
   <header th:fragment="header">
     <nav class="navbar">
       <a class="brand" th:href="@{/items}">FleaMarket</a>
-      <div class="nav-links">
-        <a th:href="@{/items}">商品一覧</a>
-        <a th:href="@{/admin/users}" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">ユーザー管理</a>
-      </div>
-
-      <!-- ログアウト：POST /logout（CSRF 必須） -->
-      <form th:action="@{/logout}" method="post" class="logout-form">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-        <button type="submit">ログアウト</button>
+      
+      <!-- 検索フォーム -->
+      <form th:action="@{/items}" method="get" class="header-search-form">
+        <select name="categoryId" class="search-category">
+          <option value="">全てのカテゴリ</option>
+          <option th:each="category : ${categories}" 
+                  th:value="${category.id}" 
+                  th:text="${category.name}"
+                  th:selected="${param.categoryId != null and param.categoryId == category.id}">
+          </option>
+        </select>
+        <input type="text" 
+               name="keyword" 
+               placeholder="キーワードで検索" 
+               th:value="${param.keyword}"
+               class="search-input">
+        <button type="submit" class="search-button">検索</button>
       </form>
+
+      <div class="nav-right">
+        <div class="nav-links">
+          <a th:href="@{/admin/users}" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">ユーザー管理</a>
+        </div>
+
+        <!-- 出品ボタン -->
+        <div class="header-actions">
+          <a th:href="@{/items/new}" 
+             class="button header-button" 
+             sec:authorize="isAuthenticated()">
+            出品
+          </a>
+          <button type="button" 
+                  class="button header-button" 
+                  sec:authorize="!isAuthenticated()"
+                  onclick="showLoginModal(); return false;">
+            出品
+          </button>
+        </div>
+
+        <!-- ログアウト：POST /logout（CSRF 必須） -->
+        <form th:action="@{/logout}" method="post" class="logout-form" sec:authorize="isAuthenticated()">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+          <button type="submit" class="logout-button">ログアウト</button>
+        </form>
+      </div>
     </nav>
   </header>
 </body>

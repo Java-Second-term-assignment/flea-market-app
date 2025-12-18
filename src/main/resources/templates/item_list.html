@@ -7,43 +7,27 @@
 </head>
 <body>
 	<header th:insert="~{fragments/layout :: header}"></header>
-    <div class="container">
-        <h1>商品一覧</h1>
-
-        <div class="main-nav">
-            <a th:href="@{/items/new}" class="button">商品を出品する</a>
-            <a th:href="@{/my-page}" class="button">マイページ</a>
-            <form th:action="@{/logout}" method="post" style="display:inline;">
-                <button type="submit" class="button secondary">ログアウト</button>
-            </form>
-        </div>
-
-        <form th:action="@{/items}" method="get" class="filter-form">
-            <div>
-                <label for="keyword">キーワード:</label>
-                <input type="text" id="keyword" name="keyword" th:value="${param.keyword}">
-            </div>
-            <div>
-                <label for="categoryId">カテゴリ:</label>
-                <select id="categoryId" name="categoryId">
-                    <option value="">全て</option>
-                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}" th:selected="${param.categoryId == category.id}"></option>
-                </select>
-            </div>
-            <button type="submit" class="button">検索</button>
-        </form>
-
+    <div class="item-list-container">
+        <div class="container">
         <div class="item-grid">
             <div class="item-card" th:each="item : ${items.content}">
-                <a th:href="@{/items/{id}(id=${item.id})}">
-                    <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" alt="商品画像">
-                    <h3 th:text="${item.name}"></h3>
-                    <p class="price" th:text="'¥' + ${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}"></p>
-                    <p class="status" th:text="${item.status}"></p>
+                <a th:href="@{/items/{id}(id=${item.id})}" class="item-card-link">
+                    <div class="item-image-wrapper">
+                        <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.png'}" 
+                             alt="商品画像"
+                             loading="lazy">
+                    </div>
+                    <div class="item-info">
+                        <h3 th:text="${item.name}"></h3>
+                        <p class="price" th:text="'¥' + ${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}"></p>
+                        <span class="status" 
+                              th:classappend="${item.status == '出品中' ? '出品中' : (item.status == '売り切れ' ? '売り切れ' : '')}"
+                              th:text="${item.status}"></span>
+                    </div>
                 </a>
             </div>
-            <div th:if="${#lists.isEmpty(items.content)}">
-                <p>商品が見つかりませんでした。</p>
+            <div th:if="${#lists.isEmpty(items.content)}" class="empty-state">
+                <p class="empty-state-text">商品が見つかりませんでした。</p>
             </div>
         </div>
 
@@ -55,6 +39,58 @@
             </span>
             <a th:if="${items.hasNext()}" th:href="@{/items(page=${items.number + 1}, keyword=${param.keyword}, categoryId=${param.categoryId})}">次へ</a>
         </div>
+        </div>
     </div>
+
+    <!-- ログイン誘導モーダル -->
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-container">
+            <h3>ログインはお済みですか？</h3>
+            <p>この機能をご利用いただくには、ログインが必要です。</p>
+            <div class="modal-buttons">
+                <a th:href="@{/login}" class="button">ログインする</a>
+                <button type="button" class="button secondary" onclick="closeLoginModal()">キャンセル</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+        }
+
+        // モーダル外をクリックで閉じる
+        document.getElementById('loginModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLoginModal();
+            }
+        });
+
+        // リップルエフェクト
+        document.querySelectorAll('.item-card-link').forEach(function(card) {
+            card.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+    </script>
 </body>
 </html>
