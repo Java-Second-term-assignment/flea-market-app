@@ -118,7 +118,48 @@ flea-market-matching-app-kouki/
  - Java 17+
  - Maven 3.9+
  - PostgreSQL 15+
-2) DB 接続設定（環境に合わせて修正）
+
+2) メール送信設定（パスワードリセット機能用）
+
+**開発環境（ローカル）:**
+```bash
+# MailHogを使用する場合（推奨）
+docker run -d -p 1025:1025 -p 8025:8025 --name mailhog mailhog/mailhog
+# メール確認: http://localhost:8025
+
+# または環境変数を設定せずにデフォルト値（Gmail）を使用
+# その場合、MAIL_USERNAMEとMAIL_PASSWORDを設定する必要があります
+```
+
+**本番環境（AWS SES）:**
+1. AWS SESでメールアドレス/ドメインを認証
+   - AWSコンソールでSESにアクセス
+   - 「Verified identities」で送信元メールアドレスまたはドメインを認証
+   - サンドボックス環境では認証済みメールアドレスにのみ送信可能
+
+2. SMTP認証情報の取得
+   - SESコンソールで「SMTP settings」に移動
+   - 「Create SMTP credentials」をクリック
+   - IAMユーザー名を入力して作成
+   - 表示されるSMTPユーザー名とパスワードを保存
+
+3. 環境変数の設定
+```bash
+export MAIL_HOST=email-smtp.ap-northeast-1.amazonaws.com  # リージョンに応じて変更
+export MAIL_PORT=587
+export MAIL_USERNAME=your-smtp-username                  # SES SMTP認証情報
+export MAIL_PASSWORD=your-smtp-password                  # SES SMTP認証情報
+export MAIL_FROM=support@fleamarket.com                  # 認証済みメールアドレス
+export MAIL_FROM_NAME=サポートチーム
+export APP_BASE_URL=https://yourdomain.com               # 本番環境のベースURL
+```
+
+**AWS SESリージョン別エンドポイント:**
+- 東京: `email-smtp.ap-northeast-1.amazonaws.com`
+- 大阪: `email-smtp.ap-northeast-3.amazonaws.com`
+- その他のリージョン: [AWS SES エンドポイント一覧](https://docs.aws.amazon.com/ses/latest/dg/smtp-endpoints.html)
+
+3) DB 接続設定（環境に合わせて修正）
  - src/main/resources/application.properties:
 ```text
 spring.datasource.url=jdbc:postgresql://localhost:5432/fleamarket_db
@@ -133,7 +174,7 @@ spring.sql.init.data-locations=classpath:/data.sql
 server.port=8080
 ```
 
-3) スキーマ初期化
+4) スキーマ初期化
  - schema.sql:
 ```text
 -- ========== CLEAN DROP (依存順) ==========
@@ -271,7 +312,7 @@ CREATE INDEX IF NOT EXISTS idx_uc_reported            ON user_complaint(reported
 CREATE INDEX IF NOT EXISTS idx_uc_reporter            ON user_complaint(reporter_user_id);
 ```
 
-4) 既存データベースへのカラム追加（既存DBを使用する場合）
+5) 既存データベースへのカラム追加（既存DBを使用する場合）
 ```text
 # PostgreSQLに接続してALTER文を実行
 psql -U kt -d fleamarketdb -f src/main/resources/alter_users_add_user_info.sql
@@ -285,7 +326,7 @@ ALTER TABLE users
   ADD COLUMN IF NOT EXISTS gender VARCHAR(10);
 ```
 
-5) 起動
+6) 起動
 ```text
 mvn spring-boot:run
 # → http://localhost:8080/

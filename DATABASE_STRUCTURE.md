@@ -23,6 +23,8 @@
 | ban_reason           | text        | BAN理由                |
 | banned_at            | timestamp   | BAN日時                |
 | banned_by_admin_id   | int4        | BAN実行管理者ID        |
+| password_reset_token | varchar(255) | パスワードリセットトークン（UUID） |
+| password_reset_token_expiry | timestamp | パスワードリセットトークン有効期限（24時間） |
 
 ### category テーブル
 | カラム名        | 型          | 説明                   |

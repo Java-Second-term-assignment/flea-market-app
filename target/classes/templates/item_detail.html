@@ -23,10 +23,23 @@
             <p>ステータス: <span th:text="${item.status}"></span></p>
 
             <div class="button-group">
-                <form th:action="@{/orders/initiate-purchase}" method="post" th:if="${item.status == '出品中' and item.seller.email != #authentication.name}" onsubmit="return confirm('本当にこの商品を購入しますか？');">
+                <!-- ログイン済みの場合の購入フォーム -->
+                <form th:action="@{/orders/initiate-purchase}" method="post" 
+                      th:if="${item.status == '出品中' and item.seller.email != #authentication.name}"
+                      sec:authorize="isAuthenticated()"
+                      id="purchaseForm"
+                      onsubmit="return confirm('本当にこの商品を購入しますか？');">
                     <input type="hidden" name="itemId" th:value="${item.id}">
                     <button type="submit" class="button">購入する</button>
                 </form>
+                <!-- 未ログインの場合の購入ボタン -->
+                <button type="button" 
+                        class="button" 
+                        th:if="${item.status == '出品中'}"
+                        sec:authorize="!isAuthenticated()"
+                        onclick="showLoginModal(); return false;">
+                    購入する
+                </button>
                 <a th:href="@{/chat/{itemId}(itemId=${item.id})}" class="button secondary">チャットで質問/交渉</a>
 
                 <div sec:authorize="isAuthenticated()" th:if="${item.seller.email != #authentication.name}">
@@ -61,5 +74,34 @@
             <a th:href="@{/items}" class="button secondary">商品一覧に戻る</a>
         </div>
     </div>
+
+    <!-- ログイン誘導モーダル -->
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-container">
+            <h3>ログインはお済みですか？</h3>
+            <p>この機能をご利用いただくには、ログインが必要です。</p>
+            <div class="modal-buttons">
+                <a th:href="@{/login}" class="button">ログインする</a>
+                <button type="button" class="button secondary" onclick="closeLoginModal()">キャンセル</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+        }
+
+        // モーダル外をクリックで閉じる
+        document.getElementById('loginModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLoginModal();
+            }
+        });
+    </script>
 </body>
 </html>

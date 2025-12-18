@@ -2,6 +2,7 @@ package com.example.fleamarketsystem.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,8 +27,11 @@ public class SecurityConfig {
 						.requestMatchers(
 								"/login",
 								"/register",
+								"/forgot-password",
+								"/reset-password",
 								"/css/**", "/js/**", "/images/**", "/webjars/**")
 						.permitAll()
+						.requestMatchers(HttpMethod.GET, "/items", "/items/**").permitAll()
 						.requestMatchers("/admin/**").hasRole("ADMIN")
 						.anyRequest().authenticated())
 				.formLogin(form -> form

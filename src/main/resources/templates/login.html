@@ -232,6 +232,10 @@
   <p class="error-message" th:if="${param.error}">ログインに失敗しました。</p>
   <p class="success-message" th:if="${param.logout}">ログアウトしました。</p>
   <p class="success-message" th:if="${param.registered}">登録が完了しました。ログインしてください。</p>
+  <p class="success-message" th:if="${param.passwordReset}">パスワードをリセットしました。新しいパスワードでログインしてください。</p>
+  <div class="link-to-forgot-password" style="margin-top: 15px; text-align: center; font-size: 14px;">
+    <a th:href="@{/forgot-password}" style="color: #000000; text-decoration: underline;">パスワードを忘れた方はこちら</a>
+  </div>
   <div class="link-to-register">
     アカウントをお持ちでない方は<a th:href="@{/register}">こちら</a>から新規登録
   </div>

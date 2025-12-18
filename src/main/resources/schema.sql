@@ -31,7 +31,11 @@ CREATE TABLE users (
   banned BOOLEAN NOT NULL DEFAULT FALSE,
   ban_reason TEXT,
   banned_at TIMESTAMP,
-  banned_by_admin_id INT
+  banned_by_admin_id INT,
+
+  -- ★ パスワードリセット
+  password_reset_token VARCHAR(255),
+  password_reset_token_expiry TIMESTAMP
 );
 
 CREATE TABLE category (

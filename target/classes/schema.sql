@@ -11,18 +11,31 @@ DROP TABLE IF EXISTS users CASCADE;
 -- ========== CREATE ==========
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(50) NOT NULL,
+  name VARCHAR(50) NOT NULL,            -- 表示名
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
   role VARCHAR(20) NOT NULL,            -- 'USER' / 'ADMIN'
   line_notify_token VARCHAR(255),
   enabled BOOLEAN NOT NULL DEFAULT TRUE,
 
+  -- ★ ユーザー情報
+  real_name VARCHAR(100),               -- 本名
+  furigana VARCHAR(100),                -- フリガナ
+  phone_number VARCHAR(20),             -- 電話番号
+  postal_code VARCHAR(10),
+  address TEXT,
+  age INTEGER,
+  gender VARCHAR(10),                   -- 'MALE' / 'FEMALE' / 'OTHER' / NULL
+
   -- ★ BAN系（最初から持たせる）
   banned BOOLEAN NOT NULL DEFAULT FALSE,
   ban_reason TEXT,
   banned_at TIMESTAMP,
-  banned_by_admin_id INT
+  banned_by_admin_id INT,
+
+  -- ★ パスワードリセット
+  password_reset_token VARCHAR(255),
+  password_reset_token_expiry TIMESTAMP
 );
 
 CREATE TABLE category (
