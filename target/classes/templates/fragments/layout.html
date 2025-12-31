@@ -34,19 +34,13 @@
           <a th:href="@{/admin/users}" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">ユーザー管理</a>
         </div>
 
-        <!-- 出品ボタン -->
+        <!-- ログインボタン（未ログイン時のみ表示） -->
         <div class="header-actions">
-          <a th:href="@{/items/new}" 
+          <a th:href="@{/login}" 
              class="button header-button" 
-             sec:authorize="isAuthenticated()">
-            出品
+             sec:authorize="!isAuthenticated()">
+            ログイン
           </a>
-          <button type="button" 
-                  class="button header-button" 
-                  sec:authorize="!isAuthenticated()"
-                  onclick="showLoginModal(); return false;">
-            出品
-          </button>
         </div>
 
         <!-- ログアウト：POST /logout（CSRF 必須） -->

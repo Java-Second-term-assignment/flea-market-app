@@ -42,6 +42,28 @@
         </div>
     </div>
 
+    <!-- 右下固定ボタン -->
+    <div class="fixed-action-buttons">
+        <!-- ログイン済みの場合：出品ボタン -->
+        <a th:href="@{/items/new}" 
+           class="fixed-button fixed-button-primary" 
+           sec:authorize="isAuthenticated()"
+           title="出品する">
+            <span class="fixed-button-icon">+</span>
+            <span class="fixed-button-text">出品</span>
+        </a>
+        
+        <!-- 未ログインの場合：出品ボタン（クリックでログインモーダル表示） -->
+        <button type="button" 
+                class="fixed-button fixed-button-primary" 
+                sec:authorize="!isAuthenticated()"
+                onclick="showLoginModal(); return false;"
+                title="出品する">
+            <span class="fixed-button-icon">+</span>
+            <span class="fixed-button-text">出品</span>
+        </button>
+    </div>
+
     <!-- ログイン誘導モーダル -->
     <div id="loginModal" class="modal-overlay">
         <div class="modal-container">

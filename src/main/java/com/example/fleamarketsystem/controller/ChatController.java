@@ -37,9 +37,14 @@ public class ChatController {
             @PathVariable("itemId") Long itemId,
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam("message") String message) {
+        // 未ログインの場合はSpring Securityが自動的にログインページにリダイレクト
+        // 念のためnullチェックを追加
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
         User sender = userService.getUserByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Sender not found"));
         chatService.sendMessage(itemId, sender, message);
-        return "redirect:/chat/{itemId}";
+        return "redirect:/items/{itemId}";
     }
 }

@@ -43,7 +43,6 @@ public class RegisterController {
 		user.setPassword(encodedPassword);
 
 		// デフォルト値を設定
-		user.setRole("USER");
 		user.setEnabled(true);
 		user.setBanned(false);
 
