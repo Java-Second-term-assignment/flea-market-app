@@ -4,7 +4,6 @@ package com.example.fleamarketsystem.controller;
 import java.util.Comparator;
 import java.util.List;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +21,6 @@ import com.example.fleamarketsystem.service.AdminUserService;
 
 @Controller
 @RequestMapping("/admin/users")
-@PreAuthorize("hasRole('ADMIN')")
 public class AdminUserController {
 
 	private final AdminUserService service;

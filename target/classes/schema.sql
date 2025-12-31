@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS app_order CASCADE;
 DROP TABLE IF EXISTS item CASCADE;
 DROP TABLE IF EXISTS category CASCADE;
 DROP TABLE IF EXISTS user_complaint CASCADE;
+DROP TABLE IF EXISTS admin CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 
 -- ========== CREATE ==========
@@ -14,7 +15,6 @@ CREATE TABLE users (
   name VARCHAR(50) NOT NULL,            -- 表示名
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
-  role VARCHAR(20) NOT NULL,            -- 'USER' / 'ADMIN'
   line_notify_token VARCHAR(255),
   enabled BOOLEAN NOT NULL DEFAULT TRUE,
 
@@ -36,6 +36,17 @@ CREATE TABLE users (
   -- ★ パスワードリセット
   password_reset_token VARCHAR(255),
   password_reset_token_expiry TIMESTAMP
+);
+
+CREATE TABLE admin (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_login_at TIMESTAMP
 );
 
 CREATE TABLE category (
@@ -135,3 +146,6 @@ CREATE INDEX IF NOT EXISTS idx_review_order_id        ON review(order_id);
 
 CREATE INDEX IF NOT EXISTS idx_uc_reported            ON user_complaint(reported_user_id);
 CREATE INDEX IF NOT EXISTS idx_uc_reporter            ON user_complaint(reporter_user_id);
+
+CREATE INDEX IF NOT EXISTS idx_admin_email            ON admin(email);
+CREATE INDEX IF NOT EXISTS idx_admin_active           ON admin(is_active);
