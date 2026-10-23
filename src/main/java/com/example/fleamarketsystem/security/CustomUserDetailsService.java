@@ -32,9 +32,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 		if (u.isBanned())
 			throw new DisabledException("Account banned");
 
+		// usersテーブルは一般ユーザーのみを管理するため、常にROLE_USERを設定
 		return new org.springframework.security.core.userdetails.User(
 				u.getEmail(),
 				u.getPassword(),
-				List.of(new SimpleGrantedAuthority("ROLE_" + u.getRole())));
+				List.of(new SimpleGrantedAuthority("ROLE_USER")));
 	}
 }

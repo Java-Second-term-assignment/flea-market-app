@@ -1,9 +1,14 @@
--- users
-INSERT INTO users (name, email, password, role, enabled)
+-- users (一般ユーザー)
+INSERT INTO users (name, email, password, enabled)
 VALUES
-  ('出品者A', 'sellerA@example.com', '{noop}password', 'USER', TRUE),
-  ('購入者B', 'xyz@example.com', '{noop}password', 'USER', TRUE),
-  ('運営者C', 'adminC@example.com',  '{noop}adminpass','ADMIN',TRUE);
+  ('出品者A', 'sellerA@example.com', '{noop}password', TRUE),
+  ('購入者B', 'xyz@example.com', '{noop}password', TRUE);
+
+-- admin (管理者)
+-- パスワード: Admin123!@# (12文字以上、大文字・小文字・数字・記号を含む)
+INSERT INTO admin (email, password, name, is_active, created_at, updated_at)
+VALUES
+  ('admin@example.com', '{bcrypt}$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '管理者', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- category
 INSERT INTO category (name) VALUES

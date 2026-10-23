@@ -27,15 +27,8 @@ public class DashboardController {
 
 	@GetMapping("/dashboard")
 	public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-		User currentUser = userRepository.findByEmailIgnoreCase(userDetails.getUsername())
-				.orElseThrow(() -> new RuntimeException("User not found"));
-
-		if ("ADMIN".equals(currentUser.getRole())) {
-			model.addAttribute("recentItems", itemService.getAllItems());
-			model.addAttribute("recentOrders", appOrderService.getAllOrders());
-			return "admin_dashboard";
-		} else {
-			return "redirect:/items";
-		}
+		// usersテーブルは一般ユーザーのみを管理するため、常に商品一覧にリダイレクト
+		// 管理者は /admin/login からログインし、/admin/** にアクセスする
+		return "redirect:/items";
 	}
 }

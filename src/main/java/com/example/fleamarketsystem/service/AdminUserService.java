@@ -68,4 +68,24 @@ public class AdminUserService {
 		u.setEnabled(true); // 任意
 		userRepository.save(u);
 	}
+
+	@Transactional
+	public User createUser(User user) {
+		// メールアドレスの重複チェック
+		if (userRepository.findByEmailIgnoreCase(user.getEmail()).isPresent()) {
+			throw new IllegalArgumentException("このメールアドレスは既に登録されています: " + user.getEmail());
+		}
+
+		// デフォルト値を設定
+		user.setEnabled(true);
+		user.setBanned(false);
+
+		// パスワードをエンコード（{noop}プレフィックスを使用）
+		if (user.getPassword() != null && !user.getPassword().startsWith("{noop}")) {
+			String encodedPassword = "{noop}" + user.getPassword();
+			user.setPassword(encodedPassword);
+		}
+
+		return userRepository.save(user);
+	}
 }

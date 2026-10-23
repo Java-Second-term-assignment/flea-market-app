@@ -16,7 +16,6 @@
                     <th>ID</th>
                     <th>名前</th>
                     <th>メールアドレス</th>
-                    <th>役割</th>
                     <th>有効/無効</th>
                     <th>操作</th>
                 </tr>
@@ -26,7 +25,6 @@
                     <td th:text="${user.id}"></td>
                     <td th:text="${user.name}"></td>
                     <td th:text="${user.email}"></td>
-                    <td th:text="${user.role}"></td>
                     <td th:text="${user.enabled ? '有効' : '無効'}"></td>
                     <td>
                         <form th:action="@{/admin/users/{id}/toggle-enabled(id=${user.id})}" method="post" style="display:inline;">
