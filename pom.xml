@@ -15,6 +15,7 @@
     <description>Complete Flea Market System with Spring Boot and Thymeleaf</description>
 
     <properties>
+        <tomcat.version>10.1.61</tomcat.version>
         <java.version>17</java.version>
         <lombok.version>1.18.30</lombok.version>
     </properties>
